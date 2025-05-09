@@ -8,5 +8,6 @@ npm run dev
 
 ## To run the backend
 ```
+cd server
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
