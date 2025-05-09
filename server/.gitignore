@@ -1,0 +1,10 @@
+# Python compiled files & cache
+__pycache__/
+*.pyc
+
+# Model files
+*.bin
+*.pth
+
+# Temp files
+temp*

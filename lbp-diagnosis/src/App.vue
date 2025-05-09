@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Input from './components/Input.vue'
+// 
 </script>
 
 <template>
-  <Input/>
+  <router-view />
 </template>
 
 <style scoped>
