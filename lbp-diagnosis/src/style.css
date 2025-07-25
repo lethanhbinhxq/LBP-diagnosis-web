@@ -19,27 +19,64 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+  /* color: rgba(255, 255, 255, 0.87);
+  background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --color-primary: #64ccc5;
+  --color-primary-variant: #47b5ae;
+  --color-secondary: #176b87;
+  --color-background: #ffffff;
+  --color-surface: #dafffb;
+  --color-error: #c7004c;
+  --color-on-primary: #04364a;
+  --color-on-secondary: #ffffff;
+  --color-on-background: #04364a;
+  --color-on-surface: #04364a;
+  --color-on-error: #ffffff;
 }
 
-body {
+h1 {
+  font-size: 2.4em;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 2em;
+  line-height: 1.2;
+}
+
+h3 {
+  font-size: 1.7em;
+  line-height: 1.3;
+}
+
+h4 {
+  font-size: 1.4em;
+  line-height: 1.4;
+}
+
+h5 {
+  font-size: 1.2em;
+  line-height: 1.5;
+}
+
+h6 {
+  font-size: 1em;
+  line-height: 1.6;
+}
+
+/* body {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
 }
 
 @utility btn {
@@ -81,4 +118,4 @@ h1 {
   a:hover {
     color: #747bff;
   }
-}
+} */

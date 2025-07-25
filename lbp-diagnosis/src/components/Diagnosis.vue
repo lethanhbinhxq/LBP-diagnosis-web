@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDiagnosisStore } from '../stores/diagnosisStore'
 import submitForDiagnosis from '../api/diagnosis_api'
+import DiagnosisChart from '../components/DiagnosisChart.vue'
 
 const router = useRouter()
 const diagnosisStore = useDiagnosisStore()
@@ -68,8 +69,9 @@ onMounted(async () => {
 
       <div class="border p-4 mt-4 bg-surface">
         <h2 class="text-xl font-semibold">Diagnosis Result:</h2>
-        <p class="mt-2">{{ diagnosisStore.result }}</p>
+        <DiagnosisChart v-if="diagnosisStore.result" :diagnosis-result="diagnosisStore.result" />
       </div>
+
 
       <button class="btn mt-4" @click="backToHome">Back to Home</button>
     </div>

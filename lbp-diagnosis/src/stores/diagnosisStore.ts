@@ -5,7 +5,7 @@ export const useDiagnosisStore = defineStore('diagnosis', {
   state: () => ({
     imageFile: null as File | null,
     textFile: null as File | null,
-    result: null as string | null,
+    result: null as { [key: string]: number } | null,
     loading: false
   }),
   actions: {
@@ -13,7 +13,7 @@ export const useDiagnosisStore = defineStore('diagnosis', {
       this.imageFile = image
       this.textFile = text
     },
-    setResult(result: string) {
+    setResult(result: { [key: string]: number }) {
       this.result = result
     },
     setLoading(state: boolean) {

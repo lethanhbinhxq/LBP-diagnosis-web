@@ -41,8 +41,13 @@ def infer(image, text):
     emb = emb.unsqueeze(0).cuda()
     with torch.no_grad():
         outputs = clf(emb)
-        pred_class = torch.argmax(outputs, dim=1).item()
-    return 'No Finding' if pred_class == 0 else 'LBP'
+        # pred_class = torch.argmax(outputs, dim=1).item()
+        soft_labels = torch.sigmoid(outputs).cpu().numpy().flatten()
+        result = {
+            "No Finding": float(soft_labels[0]),
+            "LBP": float(soft_labels[1])
+        }
+    return result
 
 # API endpoint
 @app.post("/predict")
