@@ -18,6 +18,12 @@ export const useDiagnosisStore = defineStore('diagnosis', {
     },
     setLoading(state: boolean) {
       this.loading = state
-    }
+    },
+    clear() {
+      this.imageFile = null
+      this.textFile = null
+      this.result = null
+      this.loading = false
+    },
   }
 })

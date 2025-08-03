@@ -34,6 +34,7 @@
   --color-background: #ffffff;
   --color-surface: #dafffb;
   --color-error: #c7004c;
+  --color-error-e: #f73213;
   --color-on-primary: #04364a;
   --color-on-secondary: #ffffff;
   --color-on-background: #04364a;
@@ -71,6 +72,47 @@ h6 {
   line-height: 1.6;
 }
 
+@utility btn {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  background-color: var(--color-primary);
+  color: white;
+  &:hover {
+    background-color: var(--color-primary-variant);
+  }
+  &:focus, :focus-visible {
+    border-width: 3px;
+    border-color: var(--color-secondary)
+  }
+}
+
+.v-field--variant-filled .v-field__overlay {
+  background: #cbffe3 !important;
+}
+
+.v-btn__overlay {
+    background-color: #525252
+}
+
+.v-btn:hover > .v-btn__overlay {
+  opacity: 0.5 !important;
+}
+
+.v-ripple__container {
+  color: #ffffff;
+  opacity: 0.5;
+}
+
+.v-messages__message {
+  color: #ff2f00;
+  font-weight: bold;
+}
 /* body {
   margin: 0;
   display: flex;
