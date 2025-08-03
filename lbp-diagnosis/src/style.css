@@ -97,7 +97,7 @@ h6 {
 }
 
 .v-btn__overlay {
-    background-color: #525252
+    background-color: #98fff8 !important
 }
 
 .v-btn:hover > .v-btn__overlay {
@@ -106,12 +106,20 @@ h6 {
 
 .v-ripple__container {
   color: #ffffff;
-  opacity: 0.5;
+  opacity: 0.4 !important;
 }
 
 .v-messages__message {
   color: #ff2f00;
   font-weight: bold;
+}
+
+.v-card__overlay {
+    background-color: #54e3e8 !important
+}
+
+.v-card:hover > .v-card__overlay {
+  opacity: 0.5 !important;
 }
 /* body {
   margin: 0;

@@ -149,7 +149,7 @@ function resetPage() {
 
         <!-- Buttons -->
         <div class="m-2 flex">
-          <v-btn class="m-2 flex-1" color="#64ccc5" @click="runDiagnosis" variant="flat" :disabled="loading">
+          <v-btn class="m-2 flex-1 text-white" color="#64ccc5" @click="runDiagnosis" variant="flat" :disabled="loading">
             Run
           </v-btn>
           <v-btn class="m-2 flex-1" color="#f73213" @click="resetPage" variant="flat" :disabled="loading">
