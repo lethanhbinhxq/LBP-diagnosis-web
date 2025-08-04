@@ -5,3 +5,6 @@ torchvision==0.18.0+cu128 --index-url https://download.pytorch.org/whl/cu128
 torchaudio==2.3.0+cu128 --index-url https://download.pytorch.org/whl/cu128
 git+https://github.com/RyanWangZf/MedCLIP.git
 python-multipart
+sqlalchemy
+psycopg2
+python-dotenv

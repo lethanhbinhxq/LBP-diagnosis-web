@@ -8,3 +8,6 @@ __pycache__/
 
 # Temp files
 temp*
+
+# Env file
+*.env
