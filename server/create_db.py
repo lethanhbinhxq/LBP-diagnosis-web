@@ -1,6 +1,6 @@
 from sqlalchemy import text
 from core.db_connection import admin_engine, engine, Base
-from models import user
+from models import *
 import os
 from dotenv import load_dotenv
 

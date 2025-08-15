@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { signup, login } from '../api/auth_api'
 
 const activeTab = ref(0)
 
@@ -8,16 +9,42 @@ const username = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const showPassword = ref(false)
+const errorMessage = ref('')
+const loading = ref(false)
 
 const router = useRouter()
 
-function handleLogin() {
-    router.push('/dashboard')
+async function handleLogin() {
+    errorMessage.value = ''
+    loading.value = true
+
+    try {
+        await login(username.value, password.value)
+        router.push('/dashboard')  // Redirect on successful login
+    } catch (err) {
+        errorMessage.value = 'Invalid username or password'
+    } finally {
+        loading.value = false
+    }
 }
 
-function handleSignup() {
-    console.log('Signup clicked')
-    // Implement signup logic here
+async function handleSignup() {
+    if (password.value !== confirmPassword.value) {
+        errorMessage.value = 'Passwords do not match!'
+        return
+    }
+
+    errorMessage.value = ''
+    loading.value = true
+
+    try {
+        await signup(username.value, password.value)
+        router.push('/dashboard')  // Redirect on success
+    } catch (err) {
+        errorMessage.value = 'Signup failed. Username may already exist.'
+    } finally {
+        loading.value = false
+    }
 }
 
 function signInWithGoogle() {
@@ -28,6 +55,11 @@ function signInWithGoogle() {
 function togglePasswordVisibility() {
     showPassword.value = !showPassword.value
 }
+
+watch(activeTab, (_newVal) => {
+    errorMessage.value = ''
+})
+
 </script>
 
 <template>
@@ -64,6 +96,11 @@ function togglePasswordVisibility() {
                                 :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                                 @click:append-inner="togglePasswordVisibility"></v-text-field>
 
+                            <div v-if="errorMessage" class="text-red-500 text-sm text-center font-bold">
+                                {{ errorMessage }}
+                            </div>
+
+
                             <v-btn type="submit" color="#64ccc5" block class="py-2 !text-on-secondary" variant="flat">
                                 Login
                             </v-btn>
@@ -96,11 +133,18 @@ function togglePasswordVisibility() {
                                 :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                                 @click:append-inner="togglePasswordVisibility"></v-text-field>
 
-                            <v-btn type="submit" color="#64ccc5" block class="py-2 !text-on-secondary" variant="flat">
+                            <!-- Error Message Display -->
+                            <div v-if="errorMessage" class="text-red-500 text-sm text-center font-bold">
+                                {{ errorMessage }}
+                            </div>
+
+                            <v-btn type="submit" :loading="loading" color="#64ccc5" block
+                                class="py-2 !text-on-secondary" variant="flat">
                                 Sign Up
                             </v-btn>
                         </form>
                     </v-window-item>
+
                 </v-window>
             </v-card>
         </div>

@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useDiagnosisStore } from '../stores/diagnosisStore'
 import DiagnosisChart from './DiagnosisChart.vue'
-import submitForDiagnosis from '../api/diagnosis_api'
+import { submitForDiagnosis, sendFeedback } from '../api/diagnosis_api'
 
 const diagnosisStore = useDiagnosisStore()
 
@@ -16,6 +16,8 @@ const imageUrl = ref<string>('')     // image preview
 
 const diagnosisResult = ref<Record<string, number> | null>(null)
 const loading = ref(false)
+const diagnosisId = ref<number | null>(null)
+const feedbackGiven = ref(false)
 
 function onFileUploadImage() {
   fileInputImage.value?.click()
@@ -58,15 +60,22 @@ async function runDiagnosis() {
   loading.value = true
 
   try {
-    const result = await submitForDiagnosis(imageFile, textContent.value)
-    diagnosisStore.setResult(result)
-    diagnosisResult.value = result
+    const response = await submitForDiagnosis(imageFile, textContent.value)
+    diagnosisStore.setResult(response.diagnosis)
+    diagnosisResult.value = response.diagnosis
+    diagnosisId.value = response.record_id  // Capture record ID
   } catch (err) {
     console.error(err)
     alert('Diagnosis failed.')
   } finally {
     loading.value = false
   }
+}
+
+async function submitFeedback(isCorrect: boolean) {
+  if (diagnosisId.value === null) return
+  await sendFeedback(diagnosisId.value, isCorrect)
+  feedbackGiven.value = true
 }
 
 function resetPage() {
@@ -77,6 +86,7 @@ function resetPage() {
   textContent.value = ''
   diagnosisResult.value = null
   loading.value = false
+  feedbackGiven.value = false
 
   // Reset input elements so the same file can be uploaded again
   if (fileInputImage.value) fileInputImage.value.value = ''
@@ -158,5 +168,24 @@ function resetPage() {
         </div>
       </div>
     </div>
+
+    <div v-if="diagnosisResult" class="flex flex-col items-center mt-4 gap-4">
+  <p v-if="!feedbackGiven">
+    Was this diagnosis correct? We would appreciate your feedback.
+  </p>
+  <p v-else>
+    Thank you for your feedback!
+  </p>
+  <div v-if="!feedbackGiven" class="flex gap-4">
+    <v-btn color="#40F8FF" @click="submitFeedback(true)" :disabled="loading">
+      Correct
+    </v-btn>
+    <v-btn color="#ff2f00" @click="submitFeedback(false)" :disabled="loading">
+      Wrong
+    </v-btn>
+  </div>
+</div>
+
+
   </div>
 </template>

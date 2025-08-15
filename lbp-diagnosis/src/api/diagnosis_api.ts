@@ -1,6 +1,8 @@
+// diagnosis_api.ts
+
 import axios from 'axios'
 
-async function submitForDiagnosis(imageFile: File | null, textContent: string) {
+export async function submitForDiagnosis(imageFile: File | null, textContent: string) {
     const formData = new FormData()
 
     if (imageFile) {
@@ -13,7 +15,7 @@ async function submitForDiagnosis(imageFile: File | null, textContent: string) {
     formData.append('text', textContent)
 
     try {
-        const response = await axios.post('http://localhost:8000/predict', formData, {
+        const response = await axios.post('http://localhost:8000/diagnosis/predict', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })
         return response.data.diagnosis
@@ -23,4 +25,14 @@ async function submitForDiagnosis(imageFile: File | null, textContent: string) {
     }
 }
 
-export default submitForDiagnosis
+export async function sendFeedback(diagnosisId: number, isCorrect: boolean) {
+    try {
+        await axios.post('http://localhost:8000/diagnosis/feedback', {
+            diagnosis_id: diagnosisId,
+            is_correct: isCorrect
+        })
+    } catch (err) {
+        console.error(err)
+        alert('Failed to submit feedback')
+    }
+}

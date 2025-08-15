@@ -42,6 +42,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import {sendFeedbackForm} from "../api/feedback_api.ts"
 
 const name = ref('')
 const email = ref('')
@@ -53,45 +54,22 @@ const formRef = ref()
 const emailRule = (v: string) =>
   !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Enter a valid email'
 
-function submitFeedback() {
-  // if (!formRef.value?.validate()) return
+async function submitFeedback() {
+  if (!formRef.value?.validate()) return
 
-  // // Send to backend here
-  // console.log('Submitted:', {
-  //   name: name.value,
-  //   email: email.value,
-  //   message: message.value,
-  // })
+  try {
+    await sendFeedbackForm(name.value, email.value, message.value)
 
-  // // Reset form
-  // name.value = ''
-  // email.value = ''
-  // message.value = ''
-  // showSnackbar.value = true
-  // formRef.value.resetValidation()
+    // Reset form
+    name.value = ''
+    email.value = ''
+    message.value = ''
+    showSnackbar.value = true
+    formRef.value.resetValidation()
+    valid.value = true
+  } catch (error) {
+    console.error('Failed to send feedback:', error)
+    throw error
+  }
 }
 </script>
-
-<!-- <style>
-.v-field--variant-filled .v-field__overlay {
-  background: #cbffe3 !important;
-}
-
-.v-btn__overlay {
-    background-color: #525252
-}
-
-.v-btn:hover > .v-btn__overlay {
-  opacity: 0.5 !important;
-}
-
-.v-ripple__container {
-  color: #ffffff;
-  opacity: 0.5;
-}
-
-.v-messages__message {
-  color: #ff2f00;
-  font-weight: bold;
-}
-</style> -->

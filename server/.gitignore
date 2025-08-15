@@ -5,6 +5,7 @@ __pycache__/
 # Model files
 *.bin
 *.pth
+*.zip
 
 # Temp files
 temp*
