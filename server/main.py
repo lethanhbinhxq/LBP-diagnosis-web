@@ -1,7 +1,11 @@
+# main.py
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from core.config import configure_cors
-from api import all_routers  # Import from __init__.py in /api
+from api import all_routers
+from core.create_db import init_db  # Import the function
+
+# Initialize DB at startup
+init_db()
 
 app = FastAPI()
 configure_cors(app)

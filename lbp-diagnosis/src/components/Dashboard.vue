@@ -15,7 +15,7 @@
 
         <v-list class="!bg-white" @click.stop>
           <v-list-item>
-            <v-list-item-title class="font-semibold">Hello, {{ username }}</v-list-item-title>
+            <v-list-item-title class="font-semibold">Hello, {{ fullname }}</v-list-item-title>
           </v-list-item>
 
           <v-divider></v-divider>
@@ -50,20 +50,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
+
 const rail = ref(false)
-const username = ref('Thanh Binh')
+const fullname = computed(() => authStore.fullname)
 const menuItems = [
   { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard', exact: true },
   { title: 'Diagnosis', icon: 'mdi-radiology-box', to: '/dashboard/diagnosis' },
   { title: 'Statistic', icon: 'mdi-chart-bar', to: '/dashboard/statistic' },
-  { title: 'Feedback', icon: 'mdi-text-box-edit', to: '/dashboard/feedback' },
 ]
 
 function logout() {
+  authStore.clear
   router.push('/')
 }
 </script>

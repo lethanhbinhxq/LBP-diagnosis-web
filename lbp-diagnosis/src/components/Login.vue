@@ -2,9 +2,12 @@
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { signup, login } from '../api/auth_api'
+import { useAuthStore } from '../stores/authStore'
+
+const authStore = useAuthStore()
 
 const activeTab = ref(0)
-
+const fullname = ref('')
 const username = ref('')
 const password = ref('')
 const confirmPassword = ref('')
@@ -38,7 +41,8 @@ async function handleSignup() {
     loading.value = true
 
     try {
-        await signup(username.value, password.value)
+        await signup(fullname.value, username.value, password.value)
+        authStore.fullname = fullname.value
         router.push('/dashboard')  // Redirect on success
     } catch (err) {
         errorMessage.value = 'Signup failed. Username may already exist.'
@@ -68,7 +72,7 @@ watch(activeTab, (_newVal) => {
             <!-- Heading -->
             <div>
                 <h1 class="text-center font-bold text-on-surface">Welcome to</h1>
-                <h1 class="text-teal-500 font-bold !text-5xl border-2 p-2">LBP Diagnosis</h1>
+                <h1 class="text-teal-500 font-bold !text-5xl border-2 p-2">LBP-Diagnosis</h1>
             </div>
 
             <div class="w-full h-px max-w-6xl mx-auto py-1"
@@ -88,8 +92,8 @@ watch(activeTab, (_newVal) => {
                     <!-- Login Tab -->
                     <v-window-item :value="0">
                         <form @submit.prevent="handleLogin" class="space-y-4">
-                            <v-text-field v-model="username" label="Username" outlined dense required color="primary"
-                                prepend-inner-icon="mdi-account"></v-text-field>
+                            <v-text-field v-model="username" label="Email" outlined dense required color="primary"
+                                prepend-inner-icon="mdi-email"></v-text-field>
 
                             <v-text-field v-model="password" :type="showPassword ? 'text' : 'password'" label="Password"
                                 outlined dense required color="primary" prepend-inner-icon="mdi-lock"
@@ -106,21 +110,24 @@ watch(activeTab, (_newVal) => {
                             </v-btn>
                         </form>
 
-                        <div class="my-4 text-center text-gray-500">or</div>
+                        <!-- <div class="my-4 text-center text-gray-500">or</div>
 
                         <v-btn @click="signInWithGoogle" block variant="outlined"
                             class="flex items-center justify-center gap-2 !text-teal-900">
                             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google"
                                 class="w-5 h-5" />
                             Sign in with Google
-                        </v-btn>
+                        </v-btn> -->
                     </v-window-item>
 
                     <!-- Signup Tab -->
                     <v-window-item :value="1">
                         <form @submit.prevent="handleSignup" class="space-y-4">
-                            <v-text-field v-model="username" label="Username" outlined dense required color="primary"
-                                prepend-inner-icon="mdi-account"></v-text-field>
+                            <v-text-field v-model="fullname" label="Fullname" outlined dense required color="primary"
+                                prepend-inner-icon="mdi-card-account-details"></v-text-field>
+
+                            <v-text-field v-model="username" label="Email" outlined dense required color="primary"
+                                prepend-inner-icon="mdi-email"></v-text-field>
 
                             <v-text-field v-model="password" :type="showPassword ? 'text' : 'password'" label="Password"
                                 outlined dense required color="primary" prepend-inner-icon="mdi-lock"

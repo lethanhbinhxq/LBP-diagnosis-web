@@ -3,7 +3,7 @@ from models.user import User
 from core.dependencies import get_db
 import bcrypt
 
-async def signup_user(username: str, password: str):
+async def signup_user(fullname: str, username: str, password: str):
     db: Session = next(get_db())
 
     # Check if username exists
@@ -15,7 +15,7 @@ async def signup_user(username: str, password: str):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     # Create new user
-    new_user = User(username=username, password=hashed_password.decode('utf-8'))
+    new_user = User(fullname=fullname, username=username, password=hashed_password.decode('utf-8'))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -33,4 +33,7 @@ async def login_user(username: str, password: str):
         return {"error": "Invalid username or password"}
 
     # For now, just return a simple message (JWT later if needed)
-    return {"message": "Login successful"}
+    return {
+        "message": "Login successful",
+        "fullname": user.fullname
+    }

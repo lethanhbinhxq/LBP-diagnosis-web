@@ -17,39 +17,46 @@
       <div class="space-y-8">
         <h2 class="text-2xl font-bold text-center">Diagnosis History</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- All 3 charts in one row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
           <div class="aspect-w-1 aspect-h-1">
-            <BasePieChart title="Feedback Status" :labels="['Feedback Given', 'No Feedback']"
-              :values="feedbackStatus" 
-              />
+            <BasePieChart
+              title="Feedback Status"
+              :labels="['Feedback Given', 'No Feedback']"
+              :values="feedbackStatus"
+            />
           </div>
 
           <div class="aspect-w-1 aspect-h-1">
-            <BasePieChart title="Correct vs Wrong Diagnoses" :labels="['Correct', 'Wrong']"
-              :values="correctWrong" />
+            <BasePieChart
+              title="Correct vs Wrong Diagnoses"
+              :labels="['Correct', 'Wrong']"
+              :values="correctWrong"
+            />
           </div>
-        </div>
 
-
-        <h2 class="text-2xl font-bold text-center">Correct/Wrong/No Feedback per Diagnosis Type</h2>
-        <div class="w-3/4 min-h-[50dvh] flex items-center justify-center mx-auto">
-          <BaseStackedBarChart :labels="['LBP', 'No Finding']"
-            :correct-values="[history.correctLbpDiagnoses, history.correctNoFindingDiagnoses]"
-            :wrong-values="[history.wrongLbpDiagnoses, history.wrongNoFindingDiagnoses]"
-            :no-feedback-values="[noFeedbackLbpDiagnoses, noFeedbackNoFindingDiagnoses]" />
+          <div class="min-h-[50dvh] flex items-center justify-center">
+            <BaseStackedBarChart
+              title="Correct/Wrong/No Feedback per Diagnosis Type"
+              :labels="['LBP', 'No Finding']"
+              :correct-values="[history.correctLbpDiagnoses, history.correctNoFindingDiagnoses]"
+              :wrong-values="[history.wrongLbpDiagnoses, history.wrongNoFindingDiagnoses]"
+              :no-feedback-values="[noFeedbackLbpDiagnoses, noFeedbackNoFindingDiagnoses]"
+            />
+          </div>
         </div>
       </div>
     </v-card>
-
   </div>
 </template>
 
+
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import BasePieChart from './BasePieChart.vue'
 import BaseStackedBarChart from './BaseStackedBarChart.vue'
-import { getDiagnosisHistory } from '../api/statistic_api'
 
+// Fake metrics
 const metrics = ref({
   Accuracy: '95.00%',
   Precision: '94.50%',
@@ -57,18 +64,19 @@ const metrics = ref({
   'F1 Score': '94.75%',
 })
 
+// Fake history data
 const history = ref({
-  totalDiagnoses: 0,
-  feedbackGiven: 0,
-  noFeedback: 0,
-  correctDiagnoses: 0,
-  wrongDiagnoses: 0,
-  lbpDiagnoses: 0,
-  noFindingDiagnoses: 0,
-  correctLbpDiagnoses: 0,
-  wrongLbpDiagnoses: 0,
-  correctNoFindingDiagnoses: 0,
-  wrongNoFindingDiagnoses: 0,
+  totalDiagnoses: 50,
+  feedbackGiven: 35,
+  noFeedback: 15,
+  correctDiagnoses: 40,
+  wrongDiagnoses: 10,
+  lbpDiagnoses: 30,
+  noFindingDiagnoses: 20,
+  correctLbpDiagnoses: 25,
+  wrongLbpDiagnoses: 3,
+  correctNoFindingDiagnoses: 15,
+  wrongNoFindingDiagnoses: 7,
 })
 
 const feedbackStatus = computed(() => {
@@ -85,10 +93,5 @@ const noFeedbackLbpDiagnoses = computed(() => {
 
 const noFeedbackNoFindingDiagnoses = computed(() => {
   return history.value.noFindingDiagnoses - (history.value.correctNoFindingDiagnoses + history.value.wrongNoFindingDiagnoses)
-})
-
-onMounted(async () => {
-  const data = await getDiagnosisHistory()
-  history.value = data
 })
 </script>

@@ -6,7 +6,7 @@
   --color-secondary: #176b87;
   --color-background: #ffffff;
   --color-surface: #dafffb;
-  --color-error: #c7004c;
+  --color-error: #f73213;
   --color-on-primary: #04364a;
   --color-on-secondary: #ffffff;
   --color-on-background: #04364a;
@@ -33,8 +33,7 @@
   --color-secondary: #176b87;
   --color-background: #ffffff;
   --color-surface: #dafffb;
-  --color-error: #c7004c;
-  --color-error-e: #f73213;
+  --color-error: #ff3313;
   --color-on-primary: #04364a;
   --color-on-secondary: #ffffff;
   --color-on-background: #04364a;
@@ -120,6 +119,10 @@ h6 {
 
 .v-card:hover > .v-card__overlay {
   opacity: 0.5 !important;
+}
+
+.v-pagination .v-pagination__item--is-active .v-btn__overlay {
+  opacity: 0.8 !important;
 }
 /* body {
   margin: 0;

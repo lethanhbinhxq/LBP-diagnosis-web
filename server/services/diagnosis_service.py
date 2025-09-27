@@ -1,71 +1,59 @@
+import os
+from uuid import uuid4
+from fastapi import UploadFile
 from PIL import Image
 from sqlalchemy.orm import Session
+from models.diagnosis import Diagnosis
+from core.db_connection import SessionLocal
 from models.medclip_model import MedClipHandler
 from models.mlp_classifier import MLPClassifierHandler
-from models.diagnosis_history import DiagnosisHistory
-from core.db_connection import SessionLocal
 
-# Initialize model handlers globally
+# Init once
 medclip_handler = MedClipHandler()
 mlp_handler = MLPClassifierHandler()
 
-async def process_diagnosis(image_file, text):
-    # Process image and predict
-    image_data = Image.open(image_file.file).convert("RGB")
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+async def process_diagnosis(image_file: UploadFile, text: str, session_id: int):
+    # Save uploaded image
+    ext = os.path.splitext(image_file.filename)[1]
+    filename = f"{uuid4()}{ext}"
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    with open(file_path, "wb") as f:
+        f.write(await image_file.read())
+
+    # Process embeddings + predict
+    image_data = Image.open(file_path).convert("RGB")
     img_emb, text_emb = medclip_handler.encode(image_data, text)
-    result = mlp_handler.predict(img_emb, text_emb)  # e.g., 'LBP' or 'No Finding'
+    result = mlp_handler.predict(img_emb, text_emb)
     predicted_label = max(result, key=result.get)
 
-    # Save to database
+    # Save to DB
     db: Session = SessionLocal()
-    new_record = DiagnosisHistory(
-        predicted_result=predicted_label
+    new_diag = Diagnosis(
+        session_id=session_id,
+        predicted_result=predicted_label,
+        image_path=file_path,
+        report_text=text
     )
-    db.add(new_record)
+    db.add(new_diag)
     db.commit()
-    db.refresh(new_record)
+    db.refresh(new_diag)
     db.close()
 
     return {
         "diagnosis": result,
-        "record_id": new_record.id
+        "diagnosis_id": new_diag.id
     }
 
-async def update_feedback(diagnosis_id: int, is_correct: bool):
+async def update_feedback(diagnosis_id: int, is_correct: bool, comment: str | None = None):
     db = SessionLocal()
-    record = db.query(DiagnosisHistory).filter(DiagnosisHistory.id == diagnosis_id).first()
-    if not record:
+    diag = db.query(Diagnosis).filter(Diagnosis.id == diagnosis_id).first()
+    if not diag:
         return False
-    record.is_correct = is_correct
+    diag.is_correct = is_correct
+    diag.comment = comment
     db.commit()
     db.close()
     return True
-
-def get_diagnosis_summary(db: Session):
-    total = db.query(DiagnosisHistory).count()
-    feedback_given = db.query(DiagnosisHistory).filter(DiagnosisHistory.is_correct != None).count()
-    correct = db.query(DiagnosisHistory).filter(DiagnosisHistory.is_correct == True).count()
-    wrong = db.query(DiagnosisHistory).filter(DiagnosisHistory.is_correct == False).count()
-
-    lbp_total = db.query(DiagnosisHistory).filter(DiagnosisHistory.predicted_result == 'LBP').count()
-    no_finding_total = db.query(DiagnosisHistory).filter(DiagnosisHistory.predicted_result == 'No Finding').count()
-
-    correct_lbp = db.query(DiagnosisHistory).filter(DiagnosisHistory.predicted_result == 'LBP', DiagnosisHistory.is_correct == True).count()
-    wrong_lbp = db.query(DiagnosisHistory).filter(DiagnosisHistory.predicted_result == 'LBP', DiagnosisHistory.is_correct == False).count()
-
-    correct_no_finding = db.query(DiagnosisHistory).filter(DiagnosisHistory.predicted_result == 'No Finding', DiagnosisHistory.is_correct == True).count()
-    wrong_no_finding = db.query(DiagnosisHistory).filter(DiagnosisHistory.predicted_result == 'No Finding', DiagnosisHistory.is_correct == False).count()
-
-    return {
-        "totalDiagnoses": total,
-        "feedbackGiven": feedback_given,
-        "noFeedback": total - feedback_given,
-        "correctDiagnoses": correct,
-        "wrongDiagnoses": wrong,
-        "lbpDiagnoses": lbp_total,
-        "noFindingDiagnoses": no_finding_total,
-        "correctLbpDiagnoses": correct_lbp,
-        "wrongLbpDiagnoses": wrong_lbp,
-        "correctNoFindingDiagnoses": correct_no_finding,
-        "wrongNoFindingDiagnoses": wrong_no_finding
-    }

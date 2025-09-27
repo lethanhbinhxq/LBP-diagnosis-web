@@ -1,8 +1,9 @@
 import axios from 'axios'
 
-export async function signup(username: string, password: string) {
+export async function signup(fullname:string, username: string, password: string) {
   try {
     const response = await axios.post('http://localhost:8000/auth/signup', {
+      fullname,
       username,
       password
     })

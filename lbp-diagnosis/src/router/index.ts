@@ -6,7 +6,7 @@ import Login from '../components/Login.vue'
 import Dashboard from '../components/Dashboard.vue'
 import Home from '../components/Home.vue'
 import Statistic from '../components/Statistic.vue'
-import Feedback from '../components/Feedback.vue'
+import NewDiagnosis from '../components/NewDiagnosis.vue'
 
 const routes = [
   { path: '/', name: 'Login', component: Login },
@@ -16,9 +16,11 @@ const routes = [
     children: [
       { path: '', name: 'Home', component: Home },
 
-      { path: 'diagnosis', name: 'Diagnosis', component: Diagnosis },
+      {
+        path: 'diagnosis', name: 'Diagnosis', component: Diagnosis,
+        children: [{ path: 'new', name: 'NewDiagnosis', component: NewDiagnosis }]
+      },
       { path: 'statistic', name: 'Statistic', component: Statistic },
-      { path: 'feedback', name: 'Feedback', component: Feedback },
     ]
   },
 ]

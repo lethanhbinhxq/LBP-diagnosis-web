@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { login as loginApi } from '../api/auth_api'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -6,7 +7,8 @@ export const useAuthStore = defineStore('auth', {
     password: '',
     confirmPassword: '',
     loading: false,
-    error: ''
+    error: '',
+    fullname: ''
   }),
   actions: {
     setUsername(username: string) {
@@ -29,7 +31,25 @@ export const useAuthStore = defineStore('auth', {
       this.password = ''
       this.confirmPassword = ''
       this.loading = false
+      this.error = '',
+      this.fullname = ''
+    },
+
+    async login() {
+      this.loading = true
       this.error = ''
-    }
+      try {
+        const res = await loginApi(this.username, this.password)
+
+        this.fullname = res.fullname
+
+        return true
+      } catch (err: any) {
+        this.error = err.response?.data?.detail || 'Login failed'
+        return false
+      } finally {
+        this.loading = false
+      }
+    },
   }
 })
