@@ -7,23 +7,17 @@ router = APIRouter(prefix="/auth")
 
 class SignupRequest(BaseModel):
     fullname: str
-    username: str
+    email: str
     password: str
 
 class LoginRequest(BaseModel):
-    username: str
+    email: str
     password: str
 
-@router.post("/signup")
+@router.post("/signup", status_code=201)
 async def signup(request: SignupRequest):
-    result = await signup_user(request.fullname, request.username, request.password)
-    if "error" in result:
-        raise HTTPException(status_code=400, detail=result["error"])
-    return result
-    
-@router.post("/login")
+    return await signup_user(request.fullname, request.email, request.password)
+
+@router.post("/login", status_code=200)
 async def login(request: LoginRequest):
-    result = await login_user(request.username, request.password)
-    if "error" in result:
-        raise HTTPException(status_code=400, detail=result["error"])
-    return result
+    return await login_user(request.email, request.password)

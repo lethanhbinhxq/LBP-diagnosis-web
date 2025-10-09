@@ -48,6 +48,11 @@ const chartOptions: ChartOptions<'pie'> = {
         boxHeight: 40
       }
     },
+    title: {
+      display: true,
+      text: props.title,
+      font: { size: 18 }
+    },
     datalabels: {
       color: '#000',
       textStrokeColor: '#fff',
@@ -70,7 +75,6 @@ const chartOptions: ChartOptions<'pie'> = {
 
 <template>
   <div class="max-w-[400px] mx-auto space-y-2">
-    <h3 v-if="title" class="text-lg font-semibold text-center">{{ title }}</h3>
     <Pie :data="chartData" :options="chartOptions" :key="chartData.datasets[0].data.join('-')" />
   </div>
 </template>

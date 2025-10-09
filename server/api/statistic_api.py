@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from core.dependencies import get_db
-from services.diagnosis_service import get_diagnosis_summary
+from services.statistic_service import get_statistics
+from core.db_dependencies import get_db
 
-router = APIRouter(prefix="/statistic")
+router = APIRouter(prefix="/statistics")
 
-@router.get("/diagnosis_history")
-def fetch_diagnosis_summary(db: Session = Depends(get_db)):
-    summary = get_diagnosis_summary(db)
-    return summary
+@router.get("/")
+def fetch_statistics(db: Session = Depends(get_db)):
+    """
+    Returns both model pretraining metrics and real diagnosis history
+    """
+    stats = get_statistics(db)
+    return stats

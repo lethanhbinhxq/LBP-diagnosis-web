@@ -1,63 +1,45 @@
 <template>
-  <div class="space-y-10">
-    <!-- Greeting -->
-    <div class="text-4xl font-bold">Welcome back, {{ username }}! 🎉</div>
+  <div class="space-y-10 px-4 md:px-10">
 
-    <!-- Short Introduction -->
-    <div class="text-lg text-gray-600">
-      This is the <span class="font-semibold text-primary">LBP Diagnosis System</span> — an AI-powered tool to assist diagnosis based on MRI images and radiology reports.
-      Quickly navigate below to get started!
+    <h2 class="font-bold text-center my-2">Welcome to LBP-Diagnosis</h2>
+    <!-- Brief Introduction -->
+    <div class="text-lg text-gray-700 max-w-3xl mx-auto text-center">
+      Explore the <span class="font-semibold text-primary">LBP Diagnosis System</span> — 
+      an AI-powered tool for quick and accurate lumbar spine diagnosis using MRI scans and radiology reports. 
+      Navigate below to access the system's core features.
     </div>
 
     <!-- Shortcut Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Diagnosis Shortcut -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+      <!-- Diagnosis Card -->
       <v-card
-        class="hover:shadow-2xl transition cursor-pointer"
+        class="hover:scale-105 transition-transform cursor-pointer shadow-md hover:shadow-2xl rounded-xl"
         elevation="4"
         color="#ffffff"
-        dark
         @click="goTo('Diagnosis')"
       >
-        <v-card-title class="text-2xl">
-          <v-icon class="mr-3" size="36">mdi-radiology-box</v-icon>
+        <v-card-title class="text-2xl items-center">
+          <v-icon class="mr-3" size="36" color="#06D6A0">mdi-radiology-box</v-icon>
           Diagnosis
         </v-card-title>
-        <v-card-text>
-          Upload MRI and report files to get AI-assisted diagnosis.
+        <v-card-text class="text-gray-600">
+          Upload MRI scans and radiology reports to receive AI-assisted diagnosis instantly.
         </v-card-text>
       </v-card>
 
-      <!-- Statistic Shortcut -->
+      <!-- Statistics Card -->
       <v-card
-        class="hover:shadow-2xl transition cursor-pointer"
+        class="hover:scale-105 transition-transform cursor-pointer shadow-md hover:shadow-2xl rounded-xl"
         elevation="4"
         color="#ffffff"
-        dark
         @click="goTo('Statistic')"
       >
-        <v-card-title class="text-2xl">
-          <v-icon class="mr-3" size="36">mdi-chart-bar</v-icon>
+        <v-card-title class="text-2xl items-center">
+          <v-icon class="mr-3" size="36" color="#EF476F">mdi-chart-bar</v-icon>
           Statistics
         </v-card-title>
-        <v-card-text>
-          View model performance, usage insights, and reports.
-        </v-card-text>
-      </v-card>
-
-      <!-- Feedback Shortcut -->
-      <v-card
-        class="hover:shadow-2xl transition cursor-pointer"
-        elevation="4"
-        color="#ffffff"
-        @click="goTo('Feedback')"
-      >
-        <v-card-title class="text-2xl">
-          <v-icon class="mr-3" size="36">mdi-text-box-edit</v-icon>
-          Feedback
-        </v-card-title>
-        <v-card-text>
-          Share your feedback to help us improve the system.
+        <v-card-text class="text-gray-600">
+          View model performance, diagnosis history, and insights on system usage.
         </v-card-text>
       </v-card>
     </div>
@@ -66,12 +48,17 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
 
 const router = useRouter()
-const username = ref('Thanh Binh')
 
 function goTo(page: string) {
   router.push({ name: page })
 }
 </script>
+
+<style scoped>
+/* Add smooth hover effects for cards */
+.v-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+</style>

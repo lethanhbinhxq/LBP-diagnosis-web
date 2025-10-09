@@ -6,34 +6,49 @@
       </router-link>
       <v-toolbar-title>LBP Diagnosis</v-toolbar-title>
 
-      <v-menu offset-y>
-        <template #activator="{ props }">
-          <v-btn icon v-bind="props">
-            <v-icon size="x-large">mdi-account-circle</v-icon>
-          </v-btn>
-        </template>
+      <template v-if="isAuthenticated">
+        <v-menu offset-y>
+          <template #activator="{ props }">
+            <v-btn icon v-bind="props">
+              <v-icon size="x-large">mdi-account-circle</v-icon>
+            </v-btn>
+          </template>
 
-        <v-list class="!bg-white" @click.stop>
-          <v-list-item>
-            <v-list-item-title class="font-semibold">Hello, {{ fullname }}</v-list-item-title>
-          </v-list-item>
+          <v-list class="!bg-white" @click.stop>
+            <v-list-item>
+              <v-list-item-title class="font-semibold">
+                Hello, {{ fullname }}
+              </v-list-item-title>
+            </v-list-item>
 
-          <v-divider></v-divider>
+            <v-divider></v-divider>
 
-          <v-list-item @click="logout">
-            <template #prepend>
-              <v-icon class="me-2 text-black">mdi-logout</v-icon>
-            </template>
-            <v-list-item-title>Logout</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+            <v-list-item @click="onLogout">
+              <template #prepend>
+                <v-icon class="me-2 text-black">mdi-logout</v-icon>
+              </template>
+              <v-list-item-title>Logout</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
 
+      <template v-else>
+        <v-btn variant="outlined" @click="goToLogin">
+          Login
+        </v-btn>
+      </template>
     </v-app-bar>
 
     <v-navigation-drawer app color="#011" :rail="rail" @click="rail = false">
       <v-list>
-        <v-list-item v-for="(item, index) in menuItems" :key="index" :to="item.to" :exact="item.exact" color="#019">
+        <v-list-item
+          v-for="(item, index) in menuItems"
+          :key="index"
+          :to="{ name: item.name }"
+          :exact="item.exact"
+          color="#019"
+        >
           <template #prepend>
             <v-icon size="x-large" class="pe-2">{{ item.icon }}</v-icon>
           </template>
@@ -50,24 +65,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { useAuthStore } from '../stores/authStore'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
+const { isAuthenticated, fullname } = storeToRefs(authStore)
+
 const rail = ref(false)
-const fullname = computed(() => authStore.fullname)
+
 const menuItems = [
-  { title: 'Dashboard', icon: 'mdi-view-dashboard', to: '/dashboard', exact: true },
-  { title: 'Diagnosis', icon: 'mdi-radiology-box', to: '/dashboard/diagnosis' },
-  { title: 'Statistic', icon: 'mdi-chart-bar', to: '/dashboard/statistic' },
+  { title: 'Dashboard', icon: 'mdi-view-dashboard', name: 'Home', exact: true },
+  { title: 'Diagnosis', icon: 'mdi-radiology-box', name: 'Diagnosis' },
+  { title: 'Statistic', icon: 'mdi-chart-bar', name: 'Statistic' },
 ]
 
-function logout() {
-  authStore.clear
-  router.push('/')
+function onLogout() {
+  authStore.logout()
+  router.push({ name: 'Login' })
+}
+
+function goToLogin() {
+  router.push({ name: 'Login' })
 }
 </script>
 
@@ -77,7 +99,7 @@ function logout() {
   color: #EEEEEE !important;
 }
 
-.v-list-item:hover>.v-list-item__overlay {
+.v-list-item:hover > .v-list-item__overlay {
   opacity: 0.5 !important;
 }
 

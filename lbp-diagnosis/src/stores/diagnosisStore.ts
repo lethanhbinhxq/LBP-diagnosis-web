@@ -1,29 +1,39 @@
 // diagnosisStore.ts
 import { defineStore } from 'pinia'
+import { useToastStore } from './toastStore'
+
+import { fetchDiagnosisSessionDetail } from '../api/diagnosis_api'
+import { sendFeedback } from '../api/diagnosis_api'
 
 export const useDiagnosisStore = defineStore('diagnosis', {
   state: () => ({
-    imageFile: null as File | null,
-    textFile: null as File | null,
-    result: null as { [key: string]: number } | null,
-    loading: false
+    sessions: [] as any[],
+    sessionDetail: null as any | null,
+    loading: false,
+    error: null as string | null,
   }),
+
   actions: {
-    setFiles(image: File, text: File) {
-      this.imageFile = image
-      this.textFile = text
+    async loadSessionDetail(sessionId: number) {
+      this.loading = true
+      this.error = null
+      const toast = useToastStore()
+      try {
+        this.sessionDetail = await fetchDiagnosisSessionDetail(sessionId)
+      } catch (e: any) {
+        this.error = e.message
+        toast.error(this.error ?? 'Failed to load diagnosis detail')
+      } finally {
+        this.loading = false
+      }
     },
-    setResult(result: { [key: string]: number }) {
-      this.result = result
+
+    async giveFeedback(diagnosisId: number, is_correct: boolean | null, comment: string) {
+      const updated = await sendFeedback(diagnosisId, is_correct, comment)
+      const idx = this.sessionDetail?.diagnoses.findIndex((d: any) => d.id === diagnosisId)
+      if (idx !== -1 && this.sessionDetail) {
+        this.sessionDetail.diagnoses[idx] = updated
+      }
     },
-    setLoading(state: boolean) {
-      this.loading = state
-    },
-    clear() {
-      this.imageFile = null
-      this.textFile = null
-      this.result = null
-      this.loading = false
-    },
-  }
+  },
 })

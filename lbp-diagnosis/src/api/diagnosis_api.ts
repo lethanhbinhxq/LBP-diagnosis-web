@@ -1,26 +1,37 @@
-import axios from 'axios'
+import api from './axios_instance'
 
-export async function createSession(userId: number) {
-  const res = await axios.post('http://localhost:8000/diagnosis/session', { user_id: userId })
-  return res.data
+export async function fetchDiagnosisSessions() {
+  const response = await api.get('/diagnosis/sessions')
+  return response.data  // should be an array
 }
 
-export async function submitDiagnosis(sessionId: number, imageFile: File, textContent: string) {
-  const formData = new FormData()
-  formData.append('session_id', sessionId.toString())
-  formData.append('image', imageFile)
-  formData.append('text', textContent)
-
-  const res = await axios.post('http://localhost:8000/diagnosis/predict', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+// Run a new diagnosis session
+export async function runDiagnosisSession(formData: FormData) {
+  const res = await api.post('/diagnosis/run', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data', // ✅ override default JSON
+    },
   })
   return res.data
 }
 
-export async function sendFeedback(diagnosisId: number, isCorrect: boolean, comment?: string) {
-  await axios.post('http://localhost:8000/diagnosis/feedback', {
-    diagnosis_id: diagnosisId,
-    is_correct: isCorrect,
-    comment: comment || null
-  })
+export async function fetchDiagnosisSessionDetail(sessionId: number) {
+  try {
+    const res = await api.get(`/diagnosis/sessions/${sessionId}`)
+    return res.data
+  } catch (err: any) {
+    throw new Error(err.response?.data?.detail || 'Failed to fetch session detail')
+  }
+}
+
+export async function sendFeedback(diagnosisId: number, is_correct: boolean | null, comment: string) {
+  try {
+    const response = await api.put(`/diagnosis/${diagnosisId}/feedback`, {
+      is_correct,
+      comment,
+    })
+    return response.data
+  } catch (err: any) {
+    throw new Error(err.response?.data?.detail || 'Failed to give feedback')
+  }
 }

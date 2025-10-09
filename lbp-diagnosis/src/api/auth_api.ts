@@ -1,28 +1,40 @@
-import axios from 'axios'
+import api from './axios_instance'
+import { AxiosError } from 'axios'
 
-export async function signup(fullname:string, username: string, password: string) {
+export async function signup(fullname: string, email: string, password: string) {
   try {
-    const response = await axios.post('http://localhost:8000/auth/signup', {
-      fullname,
-      username,
-      password
-    })
-    return response.data
+    const response = await api.post('/auth/signup', { fullname, email, password })
+    const data = response.data
+
+    if (data.access_token) {
+      localStorage.setItem('token', data.access_token)
+    }
+
+    return data
   } catch (err) {
-    console.error(err)
-    throw err
+    const axiosErr = err as AxiosError<{ detail?: string; message?: string }>
+    const msg = axiosErr.response?.data?.detail || axiosErr.response?.data?.message || 'Signup failed'
+    throw new Error(msg)
   }
 }
 
-export async function login(username: string, password: string) {
+export async function login(email: string, password: string) {
   try {
-    const response = await axios.post('http://localhost:8000/auth/login', {
-      username,
-      password
-    })
-    return response.data
+    const response = await api.post('/auth/login', { email, password })
+    const data = response.data
+
+    if (data.access_token) {
+      localStorage.setItem('token', data.access_token)
+    }
+
+    return data
   } catch (err) {
-    console.error(err)
-    throw err
+    const axiosErr = err as AxiosError<{ detail?: string; message?: string }>
+    const msg = axiosErr.response?.data?.detail || axiosErr.response?.data?.message || 'Login failed'
+    throw new Error(msg) 
   }
+}
+
+export function logout() {
+  localStorage.removeItem('token')
 }

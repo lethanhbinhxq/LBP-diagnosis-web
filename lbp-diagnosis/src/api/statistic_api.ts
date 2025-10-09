@@ -1,11 +1,6 @@
-import axios from 'axios'
+import api from './axios_instance'
 
-export async function getDiagnosisHistory() {
-  try {
-    const response = await axios.get('http://localhost:8000/statistic/diagnosis_history')
-    return response.data
-  } catch (err) {
-    console.error(err)
-    throw err
-  }
+export const getStatistics = async () => {
+  const res = await api.get('/statistics/')
+  return res.data
 }
